@@ -1,5 +1,7 @@
+from django.contrib.auth.decorators import login_required
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 
 from dish.models import Dish, DishDetails
@@ -14,7 +16,7 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
-    @action(detail=True, methods=['get'], )
+    @action(detail=True, methods=['get'], permission_classes=[IsAuthenticated])
     def in_cart(self, request, pk=None):
         serializer_context = {
             'request': request,
@@ -26,13 +28,13 @@ class UserViewSet(viewsets.ModelViewSet):
 
         return Response(response, status.HTTP_200_OK)
 
-    @action(detail=True, methods=['get'], )
+    @action(detail=True, methods=['get'], permission_classes=[IsAuthenticated])
     def ordered(self, request, pk=None):
         serializer_context = {
             'request': request,
         }
 
-        orders = OrderItem.objects.filter(status='o', customer = request.user)
+        orders = OrderItem.objects.filter(status='o', customer=request.user)
 
         response = OrderItemSerializer(orders, many=True, context=serializer_context).data
 
@@ -83,6 +85,7 @@ class DishDetailsViewSet(viewsets.ModelViewSet):
 class OrderItemViewSet(viewsets.ModelViewSet):
     queryset = OrderItem.objects.all()
     serializer_class = OrderItemSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     def create(self, request, *args, **kwargs):
         serializer_context = {
@@ -98,8 +101,10 @@ class OrderItemViewSet(viewsets.ModelViewSet):
 class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     def create(self, request, *args, **kwargs):
+
         serializer_context = {
             'request': request,
         }
