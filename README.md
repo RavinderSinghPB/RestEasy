@@ -1,4 +1,4 @@
-# Referral Site
+# Foodkart
 
 >## Features
 
@@ -34,7 +34,7 @@ $ # virtualenv foodkart
 $ # .\foodkart\Scripts\activate
 $
 $ # go to project directory
-$ cd foodkart
+$ cd RestEasy
 $ 
 $ # Install required packages/modules 
 $ pip3 install -r requirements.txt
